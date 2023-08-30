@@ -3,13 +3,11 @@ const nodegit = require('nodegit')
 const path = require('path')
 const fse = require('fs-extra')
 
-const repoDir = path.resolve(__dirname, './tmp_repo')
-
 module.exports.GitHelper = class GitHelper {
   async init ({ repoUrl, keyPublic, keyPrivate }) {
     await this.deleteLocalRepoFolder()
     this.creds = { keyPublic, keyPrivate }
-    this.repository = await nodegit.Clone.clone(repoUrl, repoDir, { fetchOpts: { callbacks: await this._getCallbacksWithCredentials() } })
+    this.repository = await nodegit.Clone.clone(repoUrl, '~/tmp_repo', { fetchOpts: { callbacks: await this._getCallbacksWithCredentials() } })
 
     return this
   }
@@ -45,7 +43,7 @@ module.exports.GitHelper = class GitHelper {
     const fileContent = ''
 
     // Create random file
-    const filePath = path.join(repoDir, fileName)
+    const filePath = path.join('~/tmp_repo/', fileName)
     await fse.ensureFile(filePath)
     await fse.writeFile(filePath, fileContent)
 
@@ -80,6 +78,6 @@ module.exports.GitHelper = class GitHelper {
   }
 
   async deleteLocalRepoFolder () {
-    await fse.remove(repoDir)
+    await fse.remove('~/tmp_repo')
   }
 }
